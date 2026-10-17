@@ -53,8 +53,24 @@
   $('#heroNext').addEventListener('click', () => go(current + 1, true));
   const hero = $('.hero');
   hero.addEventListener('mouseenter', () => clearTimeout(timer));
-  hero.addEventListener('mouseleave', restart);
   document.addEventListener('visibilitychange', () => (document.hidden ? clearTimeout(timer) : restart()));
+
+  /* ---------- Gestos táctiles (Swipe) en celulares para el Hero ---------- */
+  let touchStartX = 0;
+  let touchEndX = 0;
+  hero.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+
+  hero.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    const diff = touchStartX - touchEndX;
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) go(current + 1, true); // Swipe a la izquierda -> siguiente
+      else go(current - 1, true);          // Swipe a la derecha -> anterior
+    }
+  }, { passive: true });
+
   go(0);
 
   /* ---------- Sliders de producto ---------- */
